@@ -15,16 +15,7 @@ let userInput = [];
 let userHistoryArr = [];
 let userHistory = '';
 let counterArr = [];
-let screen = null;
-let stack = null;
-let stackOperation = null;
-let inputOperation = null;
-let currentOperation = null;
 let mathResult = 0;
-
-let shouldClearScreenCurrent = false;
-
-
 
 function setHandlers() {
 	document.addEventListener("keydown", keyboardHandler);
@@ -131,20 +122,10 @@ function resetHandler() {
 }
 
 function resultHandler(e) {
-	// addToCounter();
 	let stringCounter = counterArr.join('');
-	// counter();
 	mathResult = eval(stringCounter);
 	output.textContent = `${mathResult}`;
-	// updateScreen();
-	// updateHistory();
-	// console.log(stringCounter);
 }
-
-// function counter (a) {;
-	// console.log(counterArr);
-	// console.log(userHistory);
-// }
 
 function init () {
     output.textContent = "0";
@@ -200,9 +181,5 @@ function clearScreenCurrent() {
 	shouldClearScreenCurrent = false;
 }
 
-console.log(userInput);
-
-console.log(stack);
-console.log(output);
 init();
 setHandlers()
