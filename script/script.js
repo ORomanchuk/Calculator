@@ -8,6 +8,7 @@ const square = document.querySelector(".square");
 const reverse = document.querySelector(".reverse");
 const operators = document.querySelectorAll(".operator");
 const values = document.querySelectorAll(".value");
+const dotBtn = document.querySelector(".dotBtn");
 const result = document.querySelector(".result");
 const doubleZero = document.querySelector(".doubleZero");
 
@@ -27,25 +28,28 @@ function setHandlers() {
 	percent.addEventListener("click", percentHandler);
 	square.addEventListener("click", squareHandler);
 	reverse.addEventListener("click", reverseHandler);
+	dotBtn.addEventListener("click", dotHandler);
 	doubleZero.addEventListener("click", doubleZeroHandler);
 }
+
+// KEYBOARD
+// KEYBOARD
+// KEYBOARD
 
 function keyboardHandler(e) {
     if (userInput.length > 9) return;
 	if (e.key >= 0 && e.key <= 9) {
 		userInput.push(e.key);
+		counterArr.push(e.key);
 		updateScreen();
 	} else if (e.key === "Escape") {
-		clean();
+		resetHandler();
 	} else if (e.key === "Backspace" || e.key === "Delete") {
 		deleteNumber();
 	} else if (e.key === "=" || e.key === "Enter") {
-		let push = userInput.join('');
-		counterArr.push(push);
 		resultHandler();
 	} else if (e.key === "." || e.key === ",") {
-		userInput.push(".");
-		updateScreen();
+		dotHandler();
 	} else if (
 		e.key === "+" ||
 		e.key === "-" ||
@@ -53,35 +57,36 @@ function keyboardHandler(e) {
 		e.key === "/" 
 	) {
 		userInput.push(e.key);
-		addToCounter();
+		counterArr.push(e.key);
 		updateScreen();
 		updateHistory();
 		clearScreenCurrent()
 	}
 }
 
+// OPERATORS
+// OPERATORS
+// OPERATORS
+
 function squareHandler() {
-	userInput.push("²");
-	counterArr.push("**2");
+	if (userInput.length == 0) {
+		userInput.push("0²");
+		counterArr.push("0**2");
+	} else if (userInput.length > 0) {
+		userInput.push("²");
+		counterArr.push("**2");
+	}
 	updateScreen();
-	updateHistory();
-	clearScreenCurrent()
 }
 
 function percentHandler() {
-	userInput.push("%");
-	counterArr.push("*0.01");
-	updateScreen();
-	updateHistory();
-	clearScreenCurrent()
-}
-
-function doubleZeroHandler() {
-	if (userInput.length > 9) return;
-	userInput.push("0");
-	counterArr.push("0");
-	userInput.push("0");
-	counterArr.push("0");
+	if (userInput.length == 0) {
+		userInput.push("0%");
+		counterArr.push("0*0.01");
+	} else if (userInput.length > 0) {
+		userInput.push("%");
+		counterArr.push("*0.01");
+	}
 	updateScreen();
 }
 
@@ -93,39 +98,96 @@ function reverseHandler() {
 	return;
 }
 
-function valuesHandler(e) {
+function operatorsHandler() {
 	let num = this.outerText;
+	userInput.push(num);
+	counterArr.push(num);
+	updateScreen();
+	updateHistory();
+	clearScreenCurrent()
+}
 
+// VALUES
+// VALUES
+// VALUES
+
+function valuesHandler() {
+	let num = this.outerText;
 	if (userInput.length > 9) return;
 		userInput.push(num);
 		counterArr.push(num);
 		updateScreen();
 }
 
-function operatorsHandler() {
-	let num = this.outerText;
-
-	userInput.push(num);
-	// addToCounter();
-	counterArr.push(num)
+function doubleZeroHandler() {
+	if (userInput.length > 9) return;
+	userInput.push("0");
+	counterArr.push("0");
+	userInput.push("0");
+	counterArr.push("0");
 	updateScreen();
-	updateHistory();
-	clearScreenCurrent()
 }
+
+
+function dotHandler() {
+	if (userInput.length == 0) {
+		userInput.push("0.");
+		counterArr.push("0.");
+	} else if (userInput.length > 0) {
+		userInput.push(".");
+		counterArr.push(".");
+	}
+	updateScreen();
+}
+
+// FUNCTIONAL BUTTONS
+// FUNCTIONAL BUTTONS
+// FUNCTIONAL BUTTONS
+
 
 function delateHandler() {
     deleteNumber();
 }
 
 function resetHandler() {
-    clean();
+    output.textContent = "0";
+	history.textContent = "";
+	userInput = [];
+	userHistoryArr = [];
+	counterArr = [];
+	userHistory = '';
 }
 
-function resultHandler(e) {
-	let stringCounter = counterArr.join('');
-	mathResult = eval(stringCounter);
-	output.textContent = `${mathResult}`;
+function deleteNumber() {
+	userInput.pop();
+	updateScreen();
 }
+
+function resultHandler() {
+	let userInputString = userInput.join('');
+		userHistoryArr.push(userInputString);
+		userHistory += userHistoryArr.join('');
+		userHistory += ('=');
+		
+		history.textContent = `${userHistory}`;
+	let stringCounter = counterArr.join('');
+		mathResult = eval(stringCounter);
+		if (mathResult > 9999999999999) {
+			output.style.fontSize = "26px";
+			history.style.fontSize = "22px";
+			output.textContent = `${mathResult}`;
+		} else {
+			output.textContent = `${mathResult}`;
+		}
+	userInput = [];
+	userHistoryArr = [];
+	counterArr = [];
+	userHistory = '';
+}
+
+// INITIALIZATION
+// INITIALIZATION
+// INITIALIZATION
 
 function init () {
     output.textContent = "0";
@@ -136,21 +198,17 @@ function clean () {
 	history.textContent = "";
 	userInput = [];
 	userHistoryArr = [];
+	counterArr = [];
 	userHistory = '';
 }
 
-function addToCounter () {
-	let userInputString = userInput.join('');
-	counterArr.push(userInputString);
-
-}
-
-function updateScreen(result) {
+function updateScreen () {
 	if (arguments.length > 0 && !Number.isFinite(result)) {
 		init();
 		output.textContent = result;
 		return;
-	} else if (arguments.length > 0) {
+	} 
+	else if (arguments.length > 0) {
 		screen = result;
 	} else screen = userInput.join("");
 
@@ -162,23 +220,13 @@ function updateHistory () {
 		userHistoryArr.push(userInputString);
 		userHistory += userHistoryArr.join('');
 		history.textContent = `${userHistory}`;
-		console.log(userInput);
-		console.log(userInputString);
-		console.log(userHistoryArr);
-		console.log(userHistory);
 		userInput = [];
 		userHistoryArr = [];
-}
-
-function deleteNumber() {
-	userInput.pop();
-	updateScreen();
 }
 
 function clearScreenCurrent() {
 	output.textContent = "0";
 	userInput = [];
-	shouldClearScreenCurrent = false;
 }
 
 init();

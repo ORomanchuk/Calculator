@@ -2,15 +2,19 @@
 /* NORMALIZE */
 /* NORMALIZE */
 
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=Montserrat:wght@400;500;800&family=Rubik:wght@400;500&display=swap');
+
 * {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
     border: none;
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 32px;
+    font-weight: 300;
     color: white;
+    font-family: 'Rubik', sans-serif;
 }
+
 
 .flexable {
     display: flex;
